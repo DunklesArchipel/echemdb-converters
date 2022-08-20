@@ -41,8 +41,8 @@ class ECLabConverter(ECConverter):
         ... 2\t0\t0.1\t0\t0
         ... 2\t1\t1.4\t5\t1
         ... ''')
-        >>> from .csvloader import CSVloader
-        >>> ec = ECLabConverter(CSVloader.get_loader('eclab')(file))
+        >>> from ...packager.csvpackager import CSVpackager
+        >>> ec = ECLabConverter(CSVpackager.get_packager('eclab')(file))
         >>> ec.df
            t  E  I
         0  0  0  0

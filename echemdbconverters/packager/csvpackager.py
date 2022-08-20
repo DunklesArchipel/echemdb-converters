@@ -1,5 +1,5 @@
 r"""
-Loader for CSV files (https://datatracker.ietf.org/doc/html/rfc4180)
+Packager for CSV files (https://datatracker.ietf.org/doc/html/rfc4180)
 which consist of a single header line containing the column (field)
 names and rows with comma separated values.
 
@@ -17,7 +17,7 @@ The CSV object has the following properties:
     * metadata
     * schema
 
-Loaders for non standard CSV files can be called:
+Packagers for non standard CSV files can be called:
 
 ::TODO: Add example
 
@@ -46,10 +46,10 @@ Loaders for non standard CSV files can be called:
 
 import logging
 
-logger = logging.getLogger("loader")
+logger = logging.getLogger("packager")
 
 
-class CSVloader:
+class CSVpackager:
     r"""
     Loads a CSV, where the first line must contain the column (field) names
     and the following lines comma separated values.
@@ -60,7 +60,7 @@ class CSVloader:
         >>> file = StringIO(r'''a,b
         ... 0,0
         ... 1,1''')
-        >>> csv = CSVloader(file)
+        >>> csv = CSVpackager(file)
         >>> csv.df
            a  b
         0  0  0
@@ -91,7 +91,7 @@ class CSVloader:
             >>> file = StringIO(r'''a,b
             ... 0,0
             ... 1,1''')
-            >>> csv = CSVloader(file)
+            >>> csv = CSVpackager(file)
             >>> type(csv.file)
             <class '_io.StringIO'>
 
@@ -113,18 +113,18 @@ class CSVloader:
             >>> file = StringIO(r'''t,E,j
             ... 0,0,0
             ... 1,1,1''')
-            >>> from .csvloader import CSVloader
-            >>> csv = CSVloader(file)
+            >>> from .csvpackager import CSVpackager
+            >>> csv = CSVpackager(file)
             >>> csv.fields
             [{'name': 't', 'comment': 'Created by echemdb-converters.'}, {'name': 'E', 'comment': 'Created by echemdb-converters.'}, {'name': 'j', 'comment': 'Created by echemdb-converters.'}]
 
-        The fields can be provided as an argument to the loader.::
+        The fields can be provided as an argument to the packager.::
 
             >>> file = StringIO(r'''t,E,j
             ... 0,0,0
             ... 1,1,1''')
             >>> metadata = {'figure description': {'schema': {'fields': [{'name':'t', 'unit':'s'},{'name':'E', 'unit':'V', 'reference':'RHE'},{'name':'j', 'unit':'uA / cm2'}]}}}
-            >>> csv = CSVloader(file=file, metadata=metadata, fields=metadata['figure description']['schema']['fields'])
+            >>> csv = CSVpackager(file=file, metadata=metadata, fields=metadata['figure description']['schema']['fields'])
             >>> csv.fields
             [{'name': 't', 'unit': 's'}, {'name': 'E', 'unit': 'V', 'reference': 'RHE'}, {'name': 'j', 'unit': 'uA / cm2'}]
 
@@ -134,7 +134,7 @@ class CSVloader:
             ... 0,0,0
             ... 1,1,1''')
             >>> metadata = {'figure description': {'schema': {'fields': [{'name':'E', 'unit':'V', 'reference':'RHE'},{'name':'j', 'unit':'uA / cm2'},{'name': 'x'},{'foo':'bar'}]}}}
-            >>> csv = CSVloader(file=file, metadata=metadata, fields=metadata['figure description']['schema']['fields'])
+            >>> csv = CSVpackager(file=file, metadata=metadata, fields=metadata['figure description']['schema']['fields'])
             >>> csv.fields
             [{'name': 'E', 'unit': 'V', 'reference': 'RHE'}, {'name': 'j', 'unit': 'uA / cm2'}, {'name': 't', 'comment': 'Created by echemdb-converters.'}]
 
@@ -184,19 +184,19 @@ class CSVloader:
             >>> file = StringIO(r'''t,E,j
             ... 0,0,0
             ... 1,1,1''')
-            >>> from .csvloader import CSVloader
-            >>> csv = CSVloader(file)
+            >>> from .csvpackager import CSVpackager
+            >>> csv = CSVpackager(file)
             >>> csv.metadata
             {}
 
-        Without metadata provided to the loader::
+        Without metadata provided to the packager::
 
             >>> from io import StringIO
             >>> file = StringIO(r'''t,E,j
             ... 0,0,0
             ... 1,1,1''')
-            >>> from .csvloader import CSVloader
-            >>> csv = CSVloader(file, metadata={'foo':'bar'})
+            >>> from .csvpackager import CSVpackager
+            >>> csv = CSVpackager(file, metadata={'foo':'bar'})
             >>> csv.metadata
             {'foo': 'bar'}
 
@@ -204,9 +204,9 @@ class CSVloader:
         return self._metadata.copy()
 
     @staticmethod
-    def get_loader(device=None):
+    def get_packager(device=None):
         r"""
-        Calls a specific `loader` based on a given device.
+        Calls a specific `packager` based on a given device.
 
         EXAMPLES::
 
@@ -220,27 +220,19 @@ class CSVloader:
             ... 2\t0\t0.1\t0\t0
             ... 2\t1\t1.4\t5\t1
             ... ''')
-            >>> csv = CSVloader.get_loader('eclab')(file)
+            >>> csv = CSVpackager.get_packager('eclab')(file)
             >>> csv.df
             mode  time/s Ewe/V  <I>/mA  control/V
             0     2       0   0.1       0          0
             1     2       1   1.4       5          1
 
         """
-        # from .eclabloader import ECLabLoader
-
-        # devices = {
-        #     "eclab": ECLabLoader,  # Biologic-EClab device
-        # }
-
-        # if device in devices:
-        #     return devices[device]
         if device == "eclab":
-            from .eclabloader import ECLabLoader
+            from .electrochemistry.eclabpackager import ECLabPackager
 
-            return ECLabLoader
+            return ECLabPackager
 
-        raise KeyError(f"Device wth name '{device}' is unknown to the loader'.")
+        raise KeyError(f"Device wth name '{device}' is unknown to the packager'.")
 
     @property
     def df(self):
@@ -253,7 +245,7 @@ class CSVloader:
             >>> file = StringIO(r'''a,b
             ... 0,0
             ... 1,1''')
-            >>> csv = CSVloader(file)
+            >>> csv = CSVpackager(file)
             >>> csv.df
                a  b
             0  0  0
@@ -275,7 +267,7 @@ class CSVloader:
             >>> file = StringIO(r'''a,b
             ... 0,0
             ... 1,1''')
-            >>> csv = CSVloader(file)
+            >>> csv = CSVpackager(file)
             >>> csv.header
             []
 
@@ -295,7 +287,7 @@ class CSVloader:
             >>> file = StringIO(r'''a,b
             ... 0,0
             ... 1,1''')
-            >>> csv = CSVloader(file)
+            >>> csv = CSVpackager(file)
             >>> type(csv.data)
             <class '_io.StringIO'>
 
@@ -303,7 +295,7 @@ class CSVloader:
             >>> file = StringIO(r'''a,b
             ... 0,0
             ... 1,1''')
-            >>> csv = CSVloader(file)
+            >>> csv = CSVpackager(file)
             >>> csv.data.readlines()
             ['0,0\n', '1,1']
 
@@ -325,7 +317,7 @@ class CSVloader:
             >>> file = StringIO(r'''a,b
             ... 0,0
             ... 1,1''')
-            >>> csv = CSVloader(file)
+            >>> csv = CSVpackager(file)
             >>> csv.column_names
             ['a', 'b']
 
@@ -339,17 +331,17 @@ class CSVloader:
 
         EXAMPLES:
 
-        Files for the base loader do not have a header::
+        Files for the base packager do not have a header::
 
             >>> from io import StringIO
             >>> file = StringIO(r'''a,b
             ... 0,0
             ... 1,1''')
-            >>> csv = CSVloader(file)
+            >>> csv = CSVpackager(file)
             >>> csv.header_lines
             0
 
-        Implementation in a specific device loader::
+        Implementation in a specific device packager::
 
             >>> file = StringIO('''EC-Lab ASCII FILE
             ... Nb header lines : 6
@@ -360,7 +352,7 @@ class CSVloader:
             ... 2\t0\t0,1\t0\t0
             ... 2\t1\t1,4\t5\t1
             ... ''')
-            >>> csv = CSVloader.get_loader('eclab')(file)
+            >>> csv = CSVpackager.get_packager('eclab')(file)
             >>> csv.header_lines
             5
 
@@ -379,8 +371,8 @@ class CSVloader:
             >>> file = StringIO(r'''t,E,j
             ... 0,0,0
             ... 1,1,1''')
-            >>> from .csvloader import CSVloader
-            >>> csv = CSVloader(file)
+            >>> from .csvpackager import CSVpackager
+            >>> csv = CSVpackager(file)
             >>> csv.schema
             {'fields': [{'name': 't', 'comment': 'Created by echemdb-converters.'}, {'name': 'E', 'comment': 'Created by echemdb-converters.'}, {'name': 'j', 'comment': 'Created by echemdb-converters.'}]}
 
@@ -390,7 +382,7 @@ class CSVloader:
             ... 0,0,0
             ... 1,1,1''')
             >>> metadata = {'figure description': {'schema': {'fields': [{'name':'t', 'unit':'s'},{'name':'E', 'unit':'V', 'reference':'RHE'},{'name':'j', 'unit':'uA / cm2'}]}}}
-            >>> csv = CSVloader(file=file, metadata=metadata, fields=metadata['figure description']['schema']['fields'])
+            >>> csv = CSVpackager(file=file, metadata=metadata, fields=metadata['figure description']['schema']['fields'])
             >>> csv.schema
             {'fields': [{'name': 't', 'unit': 's'}, {'name': 'E', 'unit': 'V', 'reference': 'RHE'}, {'name': 'j', 'unit': 'uA / cm2'}]}
 
@@ -409,8 +401,8 @@ class CSVloader:
             >>> file = StringIO(r'''t,E,j
             ... 0,0,0
             ... 1,1,1''')
-            >>> from .csvloader import CSVloader
-            >>> csv = CSVloader(file)
+            >>> from .csvpackager import CSVpackager
+            >>> csv = CSVpackager(file)
             >>> csv.create_fields()
             [{'name': 't', 'comment': 'Created by echemdb-converters.'}, {'name': 'E', 'comment': 'Created by echemdb-converters.'}, {'name': 'j', 'comment': 'Created by echemdb-converters.'}]
 
@@ -424,7 +416,7 @@ class CSVloader:
 
         EXAMPLES::
 
-            >>> CSVloader.create_field('voltage')
+            >>> CSVpackager.create_field('voltage')
             {'name': 'voltage', 'comment': 'Created by echemdb-converters.'}
 
         """
@@ -442,7 +434,7 @@ class CSVloader:
             >>> file = StringIO(r'''a,b
             ... 0,0
             ... 1,1''')
-            >>> csv = CSVloader(file)
+            >>> csv = CSVpackager(file)
             >>> csv.delimiter
             ','
 
@@ -460,19 +452,19 @@ class CSVloader:
 
         EXAMPLES:
 
-        Not implemented in the base loader::
+        Not implemented in the base packager::
 
             >>> from io import StringIO
             >>> file = StringIO(r'''a,b
             ... 0,0
             ... 1,1''')
-            >>> csv = CSVloader(file)
+            >>> csv = CSVpackager(file)
             >>> csv.decimal
             Traceback (most recent call last):
             ...
             NotImplementedError
 
-        Implementation in a specific device loader::
+        Implementation in a specific device packager::
 
             >>> file = StringIO('''EC-Lab ASCII FILE
             ... Nb header lines : 6
@@ -483,7 +475,7 @@ class CSVloader:
             ... 2\t0\t0,1\t0\t0
             ... 2\t1\t1,4\t5\t1
             ... ''')
-            >>> csv = CSVloader.get_loader('eclab')(file)
+            >>> csv = CSVpackager.get_packager('eclab')(file)
             >>> csv.decimal
             ','
 

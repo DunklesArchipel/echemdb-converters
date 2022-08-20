@@ -3,7 +3,7 @@ Loads MPT files recorded with the EC-Lab software from BioLogic for BioLogic pot
 
 EXAMPLES:
 
-The file can be loaded with the ECLabLoader::
+The file can be loaded with the ECLabPackager::
 
     >>> from io import StringIO
     >>> file = StringIO('''EC-Lab ASCII FILE
@@ -15,13 +15,13 @@ The file can be loaded with the ECLabLoader::
     ... 2\t0\t0.1\t0\t0
     ... 2\t1\t1.4\t5\t1
     ... ''')
-    >>> eclab_csv = ECLabLoader(file)
+    >>> eclab_csv = ECLabPackager(file)
     >>> eclab_csv.df
         mode  time/s Ewe/V  <I>/mA  control/V
     0     2       0   0.1       0          0
     1     2       1   1.4       5          1
 
-The file can also be loaded from the base loader::
+The file can also be loaded from the base packager::
 
     >>> from io import StringIO
     >>> file = StringIO('''EC-Lab ASCII FILE
@@ -33,8 +33,8 @@ The file can also be loaded from the base loader::
     ... 2\t0\t0.1\t0\t0
     ... 2\t1\t1.4\t5\t1
     ... ''')
-    >>> from .csvloader import CSVloader
-    >>> csv = CSVloader.get_loader('eclab')(file)
+    >>> from ..csvpackager import CSVpackager
+    >>> csv = CSVpackager.get_packager('eclab')(file)
     >>> csv.df
         mode  time/s Ewe/V  <I>/mA  control/V
     0     2       0   0.1       0          0
@@ -69,7 +69,7 @@ The file can also be loaded from the base loader::
 # ********************************************************************
 
 
-from .csvloader import CSVloader
+from ..csvpackager import CSVpackager
 
 biologic_fields = [
     {
@@ -119,7 +119,7 @@ biologic_fields = [
 ]
 
 
-class ECLabLoader(CSVloader):
+class ECLabPackager(CSVpackager):
     r"""
     Loads BioLogic EC-Lab MPT files.
 
@@ -135,8 +135,8 @@ class ECLabLoader(CSVloader):
         ... 2\t0\t0.1\t0\t0
         ... 2\t1\t1.4\t5\t1
         ... ''')
-        >>> from .csvloader import CSVloader
-        >>> csv = CSVloader.get_loader('eclab')(file)
+        >>> from ..csvpackager import CSVpackager
+        >>> csv = CSVpackager.get_packager('eclab')(file)
         >>> csv.df
            mode  time/s Ewe/V  <I>/mA  control/V
         0     2       0   0.1       0          0
@@ -169,8 +169,8 @@ class ECLabLoader(CSVloader):
             ... 2\t0\t0.1\t0\t0
             ... 2\t1\t1.4\t5\t1
             ... ''')
-            >>> from .csvloader import CSVloader
-            >>> csv = CSVloader.get_loader('eclab')(file)
+            >>> from ..csvpackager import CSVpackager
+            >>> csv = CSVpackager.get_packager('eclab')(file)
             >>> csv.header_lines
             5
 
@@ -208,8 +208,8 @@ class ECLabLoader(CSVloader):
             ... 2\t0\t0.1\t0\t0
             ... 2\t1\t1.4\t5\t1
             ... ''')
-            >>> from .csvloader import CSVloader
-            >>> csv = CSVloader.get_loader('eclab')(file)
+            >>> from ..csvpackager import CSVpackager
+            >>> csv = CSVpackager.get_packager('eclab')(file)
             >>> csv.df
                mode  time/s Ewe/V  <I>/mA  control/V
             0     2       0   0.1       0          0
@@ -243,8 +243,8 @@ class ECLabLoader(CSVloader):
             ... 2\t0\t0.1\t0\t0
             ... 2\t1\t1.4\t5\t1
             ... ''')
-            >>> from .csvloader import CSVloader
-            >>> ec = CSVloader.get_loader('eclab')(file)
+            >>> from ..csvpackager import CSVpackager
+            >>> ec = CSVpackager.get_packager('eclab')(file)
             >>> ec.create_fields() # doctest: +NORMALIZE_WHITESPACE
             [{'name': 'mode'}, {'name': 'time/s', 'unit': 's', 'dimension': 't', 'description': 'relative time'},
             {'name': 'control/V', 'unit': 'V', 'dimension': 'E', 'description': 'control voltage'},
@@ -278,8 +278,8 @@ class ECLabLoader(CSVloader):
             ... 2\t0\t0,1\t0\t0
             ... 2\t1\t1,4\t5\t1
             ... ''')
-            >>> from .csvloader import CSVloader
-            >>> ec = CSVloader.get_loader('eclab')(file)
+            >>> from ..csvpackager import CSVpackager
+            >>> ec = CSVpackager.get_packager('eclab')(file)
             >>> ec.decimal
             ','
 

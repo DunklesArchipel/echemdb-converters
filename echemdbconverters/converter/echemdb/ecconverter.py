@@ -10,17 +10,17 @@ EXAMPLES::
     >>> file = StringIO(r'''t,E,j,x
     ... 0,0,0,0
     ... 1,1,1,1''')
-    >>> from .csvloader import CSVloader
+    >>> from ...packager.csvpackager import CSVpackager
     >>> metadata = {'figure description': {'fields': [{'name':'t', 'unit':'s'},{'name':'E', 'unit':'V', 'reference':'RHE'},{'name':'j', 'unit':'uA / cm2'},{'name':'x', 'unit':'m'}]}}
-    >>> ec = ECConverter(CSVloader(file, metadata))
+    >>> ec = ECConverter(CSVpackager(file, metadata))
     >>> ec.df
        t  E  j
     0  0  0  0
     1  1  1  1
 
-The original dataframe is still accessible from the loader::
+The original dataframe is still accessible from the packager::
 
-    >>> ec.loader.df
+    >>> ec.packager.df
        t  E  j  x
     0  0  0  0  0
     1  1  1  1  1
@@ -66,9 +66,9 @@ class ECConverter:
         >>> file = StringIO(r'''t,E,j,x
         ... 0,0,0,0
         ... 1,1,1,1''')
-        >>> from .csvloader import CSVloader
+        >>> from ...packager.csvpackager import CSVpackager
         >>> metadata = {'figure description': {'schema': {'fields': [{'name':'t', 'unit':'s'},{'name':'E', 'unit':'V', 'reference':'RHE'},{'name':'j', 'unit':'uA / cm2'},{'name':'x', 'unit':'m'}]}}}
-        >>> ec = ECConverter(CSVloader(file=file, metadata=metadata, fields=metadata['figure description']['schema']['fields']))
+        >>> ec = ECConverter(CSVpackager(file=file, metadata=metadata, fields=metadata['figure description']['schema']['fields']))
         >>> ec.df
            t  E  j
         0  0  0  0
@@ -87,8 +87,8 @@ class ECConverter:
 
     """
 
-    def __init__(self, loader, fields=None):
-        self.loader = loader
+    def __init__(self, packager, fields=None):
+        self.packager = packager
         self._fields = fields
 
     @property
@@ -102,9 +102,9 @@ class ECConverter:
             >>> file = StringIO(r'''t,E,j,x
             ... 0,0,0,0
             ... 1,1,1,1''')
-            >>> from .csvloader import CSVloader
+            >>> from ...packager.csvpackager import CSVpackager
             >>> metadata = {'figure description': {'schema': {'fields': [{'name':'t', 'unit':'s'},{'name':'E', 'unit':'V', 'reference':'RHE'},{'name':'j', 'unit':'uA / cm2'},{'name':'x', 'unit':'m'}]}}}
-            >>> ec = ECConverter(CSVloader(file=file, metadata=metadata, fields=metadata['figure description']['schema']['fields']))
+            >>> ec = ECConverter(CSVpackager(file=file, metadata=metadata, fields=metadata['figure description']['schema']['fields']))
             >>> ec.fields
             [{'name': 't', 'unit': 's'}, {'name': 'E', 'unit': 'V', 'reference': 'RHE'}, {'name': 'j', 'unit': 'uA / cm2'}, {'name': 'x', 'unit': 'm'}]
 
@@ -114,8 +114,8 @@ class ECConverter:
             >>> file = StringIO(r'''t,E,j,x
             ... 0,0,0,0
             ... 1,1,1,1''')
-            >>> from .csvloader import CSVloader
-            >>> ec = ECConverter(CSVloader(file=file))
+            >>> from ...packager.csvpackager import CSVpackager
+            >>> ec = ECConverter(CSVpackager(file=file))
             >>> ec.fields  # doctest: +NORMALIZE_WHITESPACE
             [{'name': 't', 'comment': 'Created by echemdb-converters.'},
             {'name': 'E', 'comment': 'Created by echemdb-converters.'},
@@ -124,7 +124,7 @@ class ECConverter:
 
         """
         if not self._fields:
-            return self.loader.fields
+            return self.packager.fields
 
         return self._fields
 
@@ -160,8 +160,8 @@ class ECConverter:
             >>> file = StringIO(r'''t,E,j,x
             ... 0,0,0,0
             ... 1,1,1,1''')
-            >>> from .csvloader import CSVloader
-            >>> ec = ECConverter(CSVloader(file))
+            >>> from ...packager.csvpackager import CSVpackager
+            >>> ec = ECConverter(CSVpackager(file))
             >>> ec.name_conversion
             {}
         """
@@ -224,7 +224,7 @@ class ECConverter:
         describing the columns of the converted electrochemical data.
 
         In case the field names were not changed in property:name_conversion:
-        the resulting schema is identical to that of the loader.
+        the resulting schema is identical to that of the packager.
 
         EXAMPLES::
 
@@ -232,9 +232,9 @@ class ECConverter:
             >>> file = StringIO(r'''t,E,j,x
             ... 0,0,0,0
             ... 1,1,1,1''')
-            >>> from .csvloader import CSVloader
+            >>> from ...packager.csvpackager import CSVpackager
             >>> metadata = {'figure description': {'schema': {'fields': [{'name':'t', 'unit':'s'},{'name':'E', 'unit':'V', 'reference':'RHE'},{'name':'j', 'unit':'uA / cm2'},{'name':'x', 'unit':'m'}]}}}
-            >>> ec = ECConverter(CSVloader(file=file, metadata=metadata, fields=metadata['figure description']['schema']['fields']))
+            >>> ec = ECConverter(CSVpackager(file=file, metadata=metadata, fields=metadata['figure description']['schema']['fields']))
             >>> ec._schema
             {'fields': [{'name': 't', 'unit': 's'}, {'name': 'E', 'unit': 'V', 'reference': 'RHE'}, {'name': 'j', 'unit': 'uA / cm2'}, {'name': 'x', 'unit': 'm'}]}
 
@@ -243,14 +243,14 @@ class ECConverter:
             >>> file = StringIO(r'''t,E,j,x
             ... 0,0,0,0
             ... 1,1,1,1''')
-            >>> from .csvloader import CSVloader
+            >>> from ...packager.csvpackager import CSVpackager
             >>> metadata = {'figure description': {'schema': {'fields': [{'name':'t', 'unit':'s'},{'name':'E', 'unit':'V', 'reference':'RHE'},{'name':'j', 'unit':'uA / cm2'}]}}}
-            >>> ec = ECConverter(CSVloader(file=file, metadata=metadata, fields=metadata['figure description']['schema']['fields']))
+            >>> ec = ECConverter(CSVpackager(file=file, metadata=metadata, fields=metadata['figure description']['schema']['fields']))
             >>> ec._schema
             {'fields': [{'name': 't', 'unit': 's'}, {'name': 'E', 'unit': 'V', 'reference': 'RHE'}, {'name': 'j', 'unit': 'uA / cm2'}, {'name': 'x', 'comment': 'Created by echemdb-converters.'}]}
 
         """
-        schema = self.loader.schema
+        schema = self.packager.schema
 
         for name in schema.field_names:
             if name in self.name_conversion:
@@ -270,9 +270,9 @@ class ECConverter:
             >>> file = StringIO(r'''t,E,j,x
             ... 0,0,0,0
             ... 1,1,1,1''')
-            >>> from .csvloader import CSVloader
+            >>> from ...packager.csvpackager import CSVpackager
             >>> metadata = {'figure description': {'schema': {'fields': [{'name':'t', 'unit':'s'},{'name':'E', 'unit':'V', 'reference':'RHE'},{'name':'j', 'unit':'uA / cm2'},{'name':'x', 'unit':'m'}]}}}
-            >>> ec = ECConverter(CSVloader(file=file, metadata=metadata, fields=metadata['figure description']['schema']['fields']))
+            >>> ec = ECConverter(CSVpackager(file=file, metadata=metadata, fields=metadata['figure description']['schema']['fields']))
             >>> ec.schema
             {'fields': [{'name': 't', 'unit': 's'}, {'name': 'E', 'unit': 'V', 'reference': 'RHE'}, {'name': 'j', 'unit': 'uA / cm2'}]}
 
@@ -301,9 +301,9 @@ class ECConverter:
             >>> file = StringIO(r'''t,E,j,x
             ... 0,0,0,0
             ... 1,1,1,1''')
-            >>> from .csvloader import CSVloader
+            >>> from ...packager.csvpackager import CSVpackager
             >>> metadata = {'figure description': {'schema': {'fields': [{'name':'t', 'unit':'s'},{'name':'E', 'unit':'V', 'reference':'RHE'},{'name':'j', 'unit':'uA / cm2'},{'name':'x', 'unit':'m'}]}}}
-            >>> ec = ECConverter(CSVloader(file, metadata))
+            >>> ec = ECConverter(CSVpackager(file, metadata))
             >>> ec.column_names
             ['t', 'E', 'j']
 
@@ -319,16 +319,16 @@ class ECConverter:
             >>> file = StringIO(r'''t,E,j,x
             ... 0,0,0,0
             ... 1,1,1,1''')
-            >>> from .csvloader import CSVloader
+            >>> from ...packager.csvpackager import CSVpackager
             >>> metadata = {'figure description': {'fields': [{'name':'t', 'unit':'s'},{'name':'E', 'unit':'V', 'reference':'RHE'},{'name':'j', 'unit':'uA / cm2'},{'name':'x', 'unit':'m'}]}}
-            >>> ec = ECConverter(CSVloader(file, metadata))
+            >>> ec = ECConverter(CSVpackager(file, metadata))
             >>> ec._df
                t  E  j  x
             0  0  0  0  0
             1  1  1  1  1
 
         """
-        df = self.loader.df.copy()
+        df = self.packager.df.copy()
         df.columns = self._schema.field_names
         return df
 
@@ -346,9 +346,9 @@ class ECConverter:
             >>> file = StringIO(r'''t,E,j,x
             ... 0,0,0,0
             ... 1,1,1,1''')
-            >>> from .csvloader import CSVloader
+            >>> from ...packager.csvpackager import CSVpackager
             >>> metadata = {'figure description': {'fields': [{'name':'t', 'unit':'s'},{'name':'E', 'unit':'V', 'reference':'RHE'},{'name':'j', 'unit':'uA / cm2'},{'name':'x', 'unit':'m'}]}}
-            >>> ec = ECConverter(CSVloader(file, metadata))
+            >>> ec = ECConverter(CSVpackager(file, metadata))
             >>> ec.df
                t  E  j
             0  0  0  0
@@ -368,13 +368,13 @@ class ECConverter:
             >>> file = StringIO(r'''t,E,j,x
             ... 0,0,0,0
             ... 1,1,1,1''')
-            >>> from .csvloader import CSVloader
+            >>> from ...packager.csvpackager import CSVpackager
             >>> metadata = {'figure description': {'fields': [{'name':'t', 'unit':'s'},{'name':'E', 'unit':'V', 'reference':'RHE'},{'name':'j', 'unit':'uA / cm2'},{'name':'x', 'unit':'m'}]}}
-            >>> ec = ECConverter(CSVloader(file, metadata))
+            >>> ec = ECConverter(CSVpackager(file, metadata))
             >>> ec.metadata  # doctest: +NORMALIZE_WHITESPACE
             {'figure description': {'fields': [{'name': 't', 'unit': 's'},
             {'name': 'E', 'unit': 'V', 'reference': 'RHE'},
             {'name': 'j', 'unit': 'uA / cm2'}, {'name': 'x', 'unit': 'm'}]}}
 
         """
-        return self.loader.metadata
+        return self.packager.metadata
